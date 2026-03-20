@@ -7,52 +7,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --card: #16161f;
-    --border: #ffffff0f;
-    --red: #ff2d2d;
-    --red-dim: #ff2d2d22;
-    --text: #f0f0f5;
-    --muted: #7070a0;
-    --success: #00e676;
-    --warning: #ffb300;
-    --tg: #29b6f6;
-    --tg-dim: #29b6f622;
-    --radius: 14px;
+    --bg: #0a0a0f; --surface: #111118; --card: #16161f; --border: #ffffff0f;
+    --red: #ff2d2d; --red-dim: #ff2d2d22; --text: #f0f0f5; --muted: #7070a0;
+    --success: #00e676; --warning: #ffb300; --tg: #29b6f6; --tg-dim: #29b6f622;
+    --green: #00e676; --green-dim: #00e67622; --radius: 14px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
   body::before {
     content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-image: linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
     background-size: 48px 48px; pointer-events: none; z-index: 0;
   }
   .wrapper { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; }
 
-  /* HEADER */
-  header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; animation: fadeDown .5s ease both; }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; animation: fadeDown .5s ease both; flex-wrap: wrap; }
   .logo { width: 44px; height: 44px; background: var(--red); border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; }
   .logo svg { width: 22px; fill: white; }
-  header h1 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; }
-  header h1 span { color: var(--red); }
-  header p { color: var(--muted); font-size: .85rem; margin-top: 2px; }
-  .tg-badge { margin-left: auto; display: flex; align-items: center; gap: 7px; background: var(--tg-dim); border: 1px solid var(--tg); border-radius: 20px; padding: 5px 14px; font-size: .78rem; color: var(--tg); font-weight: 600; flex-shrink: 0; }
-  .tg-badge svg { width: 14px; fill: var(--tg); }
+  .header-text h1 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; letter-spacing: -.02em; }
+  .header-text h1 span { color: var(--red); }
+  .header-text p { color: var(--muted); font-size: .85rem; margin-top: 2px; }
+  .header-badges { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge { display: flex; align-items: center; gap: 6px; border-radius: 20px; padding: 5px 13px; font-size: .76rem; font-weight: 600; }
+  .badge-tg  { background: var(--tg-dim);   border: 1px solid var(--tg);   color: var(--tg);   }
+  .badge-tg svg { width: 13px; fill: var(--tg); }
 
-  /* TABS */
   .tabs { display: flex; gap: 4px; margin-bottom: 28px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 4px; animation: fadeUp .4s ease both; }
   .tab { flex: 1; text-align: center; padding: 9px; border-radius: 7px; font-family: 'Syne', sans-serif; font-size: .82rem; font-weight: 700; letter-spacing: .04em; cursor: pointer; color: var(--muted); transition: background .2s, color .2s; }
   .tab.active { background: var(--red); color: white; }
-
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* CARD */
   .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin-bottom: 28px; animation: fadeUp .5s .1s ease both; }
   .card-title { font-family: 'Syne', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 24px; }
 
-  /* DROPZONE */
   .dropzone { border: 2px dashed var(--border); border-radius: 10px; padding: 36px 24px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; margin-bottom: 20px; position: relative; }
   .dropzone:hover, .dropzone.dragover { border-color: var(--red); background: var(--red-dim); }
   .dropzone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
@@ -61,7 +49,6 @@
   .dropzone p strong { color: var(--text); }
   .file-chosen { margin-top: 8px; font-size: .82rem; color: var(--success); font-weight: 500; }
 
-  /* THUMB */
   .thumb-row { display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px dashed var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; cursor: pointer; transition: border-color .2s; position: relative; }
   .thumb-row:hover { border-color: var(--red); }
   .thumb-row input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
@@ -71,7 +58,6 @@
   .thumb-info strong { color: var(--text); font-size: .9rem; }
   .thumb-chosen { font-size: .8rem; color: var(--success); margin-top: 2px; }
 
-  /* FIELDS */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media(max-width:560px){ .grid-2 { grid-template-columns: 1fr; } }
   .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
@@ -82,7 +68,6 @@
   .field select option { background: #1a1a2e; }
   .divider { height: 1px; background: var(--border); margin: 20px 0; }
 
-  /* TOGGLE */
   .toggle-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; cursor: pointer; }
   .toggle { width: 40px; height: 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; position: relative; transition: background .2s; flex-shrink: 0; }
   .toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: var(--muted); border-radius: 50%; transition: transform .2s, background .2s; }
@@ -94,37 +79,36 @@
   .recorrencia-box.visible { display: block; }
   .recorrencia-box .field { margin-bottom: 0; }
 
-  /* BUTTONS */
   .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--red); color: white; font-family: 'Syne', sans-serif; font-size: .9rem; font-weight: 700; letter-spacing: .04em; border: none; border-radius: 8px; padding: 12px 28px; cursor: pointer; transition: opacity .2s, transform .1s; }
   .btn:hover { opacity: .88; }
   .btn:active { transform: scale(.97); }
   .btn:disabled { opacity: .4; cursor: not-allowed; }
-  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 400; padding: 6px 14px; }
+  .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 400; padding: 6px 12px; }
   .btn-outline:hover { border-color: var(--red); color: var(--red); opacity: 1; }
+  .btn-green { background: var(--green); color: #000; }
+  .btn-green:hover { opacity: .85; }
 
-  /* QUEUE */
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 10px; flex-wrap: wrap; }
   .section-header h2 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
   .count-badge { background: var(--red-dim); color: var(--red); font-size: .75rem; font-weight: 700; border-radius: 20px; padding: 2px 10px; }
-
   .empty-state { text-align: center; color: var(--muted); padding: 40px; font-size: .9rem; border: 1px dashed var(--border); border-radius: var(--radius); }
 
-  .queue-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 16px; animation: fadeUp .3s ease both; transition: border-color .2s; }
+  .queue-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; animation: fadeUp .3s ease both; transition: border-color .2s; }
   .queue-item:hover { border-color: #ffffff1a; }
   .qi-thumb { width: 56px; height: 36px; background: var(--surface); border-radius: 6px; display: grid; place-items: center; flex-shrink: 0; font-size: 1.2rem; overflow: hidden; }
   .qi-thumb img { width: 100%; height: 100%; object-fit: cover; }
   .qi-info { flex: 1; min-width: 0; }
-  .qi-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .qi-meta { color: var(--muted); font-size: .78rem; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-  .badge-recorrente { background: #7c3aed22; color: #a78bfa; font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 20px; padding: 2px 8px; }
-  .qi-status { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 20px; padding: 3px 10px; flex-shrink: 0; }
+  .qi-title { font-family: 'Syne', sans-serif; font-weight: 600; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .qi-meta { color: var(--muted); font-size: .76rem; margin-top: 3px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .badge-rec { background: #7c3aed22; color: #a78bfa; font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 20px; padding: 2px 8px; }
+  .qi-status { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 20px; padding: 3px 10px; flex-shrink: 0; }
   .status-aguardando { background: #ffb30022; color: var(--warning); }
   .status-enviando   { background: #2979ff22; color: #2979ff; }
   .status-enviado    { background: #00e67622; color: var(--success); }
   .status-erro       { background: var(--red-dim); color: var(--red); }
   .status-cancelado  { background: #ffffff11; color: var(--muted); }
+  .qi-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-  /* HISTÓRICO */
   .hist-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 16px; animation: fadeUp .3s ease both; }
   .hist-thumb { width: 52px; height: 34px; background: var(--surface); border-radius: 6px; display: grid; place-items: center; font-size: 1.1rem; flex-shrink: 0; }
   .hist-info { flex: 1; min-width: 0; }
@@ -133,16 +117,22 @@
   .hist-link { color: var(--success); font-size: .82rem; font-weight: 500; text-decoration: none; flex-shrink: 0; }
   .hist-link:hover { text-decoration: underline; }
 
-  /* TOAST */
-  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 22px; font-size: .88rem; opacity: 0; transition: opacity .3s, transform .3s; z-index: 999; pointer-events: none; white-space: nowrap; }
+  /* MODAL DE EDIÇÃO */
+  .modal-overlay { position: fixed; inset: 0; background: #000000cc; z-index: 100; display: none; place-items: center; }
+  .modal-overlay.open { display: grid; }
+  .modal { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: 100%; max-width: 480px; margin: 16px; animation: fadeUp .3s ease both; }
+  .modal h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 20px; }
+  .modal-footer { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+
+  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 22px; font-size: .88rem; opacity: 0; transition: opacity .3s, transform .3s; z-index: 999; pointer-events: none; white-space: nowrap; max-width: 90vw; text-align: center; }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   #toast.success { border-color: var(--success); color: var(--success); }
-  #toast.error   { border-color: var(--red); color: var(--red); }
+  #toast.error   { border-color: var(--red);     color: var(--red);     }
 
-  @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:none; } }
-  @keyframes fadeUp   { from { opacity:0; transform:translateY(16px);  } to { opacity:1; transform:none; } }
-  .spinner { width: 14px; height: 14px; border: 2px solid #ffffff44; border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:none} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:none} }
+  .spinner { width:14px; height:14px; border:2px solid #ffffff44; border-top-color:white; border-radius:50%; animation:spin .7s linear infinite; display:inline-block; }
+  @keyframes spin { to{transform:rotate(360deg)} }
 </style>
 </head>
 <body>
@@ -152,28 +142,28 @@
     <div class="logo">
       <svg viewBox="0 0 24 24"><path d="M23.5 6.2s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.8 2 12 2 12 2s-4.8 0-7.3.1c-.6.1-1.9.1-3 1.3C.8 4.2.5 6.2.5 6.2S.2 8.5.2 10.8v2.1c0 2.3.3 4.6.3 4.6s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7 21.7 12 21.8 12 21.8s4.8 0 7.3-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.3.3-4.6v-2.1c0-2.3-.3-4.6-.3-4.6zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z"/></svg>
     </div>
-    <div>
+    <div class="header-text">
       <h1>YouTube <span>Scheduler</span></h1>
       <p>Agende uploads automáticos para o seu canal</p>
     </div>
-    <div class="tg-badge">
-      <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.978.942z"/></svg>
-      Telegram ativo
+    <div class="header-badges">
+      <div class="badge badge-tg">
+        <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.17 13.617l-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.978.942z"/></svg>
+        @meuytupload_bot
+      </div>
     </div>
   </header>
 
-  <!-- TABS -->
   <div class="tabs">
     <div class="tab active" onclick="switchTab('agendar')">📹 Agendar</div>
     <div class="tab" onclick="switchTab('fila')">⏳ Fila</div>
     <div class="tab" onclick="switchTab('historico')">📋 Histórico</div>
   </div>
 
-  <!-- TAB: AGENDAR -->
+  <!-- AGENDAR -->
   <div id="tab-agendar" class="tab-content active">
     <div class="card">
       <div class="card-title">Novo agendamento</div>
-
       <div class="dropzone" id="dropzone">
         <input type="file" id="fileInput" accept="video/*">
         <div class="dropzone-icon">🎬</div>
@@ -181,7 +171,6 @@
         <p style="margin-top:4px">MP4, AVI, MOV, MKV, WEBM</p>
         <div class="file-chosen" id="fileChosen"></div>
       </div>
-
       <div class="thumb-row">
         <input type="file" id="thumbInput" accept="image/*">
         <div class="thumb-preview" id="thumbPreview">🖼️</div>
@@ -191,23 +180,11 @@
           <div class="thumb-chosen" id="thumbChosen"></div>
         </div>
       </div>
-
       <div class="grid-2">
-        <div class="field">
-          <label>Título</label>
-          <input type="text" id="titulo" placeholder="Nome do vídeo">
-        </div>
-        <div class="field">
-          <label>Data e hora</label>
-          <input type="datetime-local" id="horario">
-        </div>
+        <div class="field"><label>Título</label><input type="text" id="titulo" placeholder="Nome do vídeo"></div>
+        <div class="field"><label>Data e hora</label><input type="datetime-local" id="horario"></div>
       </div>
-
-      <div class="field">
-        <label>Descrição</label>
-        <textarea id="descricao" placeholder="Descrição do vídeo (opcional)"></textarea>
-      </div>
-
+      <div class="field"><label>Descrição</label><textarea id="descricao" placeholder="Descrição (opcional)"></textarea></div>
       <div class="field" style="margin-bottom:20px">
         <label>Privacidade</label>
         <select id="privacidade">
@@ -216,14 +193,11 @@
           <option value="private">🔒 Privado</option>
         </select>
       </div>
-
       <div class="divider"></div>
-
       <div class="toggle-row" onclick="toggleRecorrencia()">
         <div class="toggle" id="toggleBtn"></div>
         <div class="toggle-label"><strong>Repetir automaticamente</strong> — postar em intervalos fixos</div>
       </div>
-
       <div class="recorrencia-box" id="recorrenciaBox">
         <div class="field">
           <label>Frequência</label>
@@ -233,14 +207,11 @@
           </select>
         </div>
       </div>
-
-      <button class="btn" id="btnAgendar" onclick="agendar()">
-        <span>Agendar upload</span>
-      </button>
+      <button class="btn" id="btnAgendar" onclick="agendar()"><span>Agendar upload</span></button>
     </div>
   </div>
 
-  <!-- TAB: FILA -->
+  <!-- FILA -->
   <div id="tab-fila" class="tab-content">
     <div class="section-header">
       <h2>Fila de envios</h2>
@@ -249,179 +220,223 @@
     <div id="queueList"></div>
   </div>
 
-  <!-- TAB: HISTÓRICO -->
+  <!-- HISTÓRICO -->
   <div id="tab-historico" class="tab-content">
     <div class="section-header">
       <h2>Histórico de uploads</h2>
-      <span class="count-badge" id="histCount">0</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="count-badge" id="histCount">0</span>
+        <button class="btn btn-green" style="padding:7px 16px;font-size:.8rem" onclick="exportarExcel()">⬇️ Exportar Excel</button>
+      </div>
     </div>
     <div id="histList"></div>
   </div>
 
 </div>
+
+<!-- MODAL EDIÇÃO -->
+<div class="modal-overlay" id="modalOverlay" onclick="fecharModal(event)">
+  <div class="modal">
+    <h3>✏️ Editar agendamento</h3>
+    <input type="hidden" id="editId">
+    <div class="field"><label>Título</label><input type="text" id="editTitulo"></div>
+    <div class="field"><label>Descrição</label><textarea id="editDescricao" style="min-height:60px"></textarea></div>
+    <div class="field"><label>Data e hora</label><input type="datetime-local" id="editHorario"></div>
+    <div class="field">
+      <label>Privacidade</label>
+      <select id="editPrivacidade">
+        <option value="public">🌍 Público</option>
+        <option value="unlisted">🔗 Não listado</option>
+        <option value="private">🔒 Privado</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+      <button class="btn" onclick="salvarEdicao()">Salvar</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-  // Horário padrão
   const now = new Date();
   now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
   document.getElementById('horario').value = now.toISOString().slice(0,16);
 
-  // Tabs
   function switchTab(name) {
-    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['agendar','fila','historico'][i] === name));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    if (name === 'fila') carregarFila();
-    if (name === 'historico') carregarHistorico();
+    document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['agendar','fila','historico'][i]===name));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    document.getElementById('tab-'+name).classList.add('active');
+    if(name==='fila') carregarFila();
+    if(name==='historico') carregarHistorico();
   }
 
   // Dropzone
-  const dropzone = document.getElementById('dropzone');
-  const fileInput = document.getElementById('fileInput');
-  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-  dropzone.addEventListener('drop', e => { e.preventDefault(); dropzone.classList.remove('dragover'); fileInput.files = e.dataTransfer.files; onFileChange(); });
-  fileInput.addEventListener('change', onFileChange);
-  function onFileChange() {
-    const f = fileInput.files[0];
-    if (!f) return;
-    document.getElementById('fileChosen').textContent = '✓ ' + f.name;
-    if (!document.getElementById('titulo').value)
-      document.getElementById('titulo').value = f.name.replace(/\.[^/.]+$/, '');
+  const dropzone=document.getElementById('dropzone'), fileInput=document.getElementById('fileInput');
+  dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.classList.add('dragover');});
+  dropzone.addEventListener('dragleave',()=>dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop',e=>{e.preventDefault();dropzone.classList.remove('dragover');fileInput.files=e.dataTransfer.files;onFileChange();});
+  fileInput.addEventListener('change',onFileChange);
+  function onFileChange(){
+    const f=fileInput.files[0]; if(!f) return;
+    document.getElementById('fileChosen').textContent='✓ '+f.name;
+    if(!document.getElementById('titulo').value) document.getElementById('titulo').value=f.name.replace(/\.[^/.]+$/,'');
   }
 
-  // Thumbnail
-  document.getElementById('thumbInput').addEventListener('change', function() {
-    const f = this.files[0];
-    if (!f) return;
-    document.getElementById('thumbChosen').textContent = '✓ ' + f.name;
-    const r = new FileReader();
-    r.onload = e => document.getElementById('thumbPreview').innerHTML = `<img src="${e.target.result}">`;
+  document.getElementById('thumbInput').addEventListener('change',function(){
+    const f=this.files[0]; if(!f) return;
+    document.getElementById('thumbChosen').textContent='✓ '+f.name;
+    const r=new FileReader(); r.onload=e=>document.getElementById('thumbPreview').innerHTML=`<img src="${e.target.result}">`;
     r.readAsDataURL(f);
   });
 
-  // Toggle recorrência
-  let recorrente = false;
-  function toggleRecorrencia() {
-    recorrente = !recorrente;
-    document.getElementById('toggleBtn').classList.toggle('on', recorrente);
-    document.getElementById('recorrenciaBox').classList.toggle('visible', recorrente);
+  let recorrente=false;
+  function toggleRecorrencia(){
+    recorrente=!recorrente;
+    document.getElementById('toggleBtn').classList.toggle('on',recorrente);
+    document.getElementById('recorrenciaBox').classList.toggle('visible',recorrente);
   }
 
-  // Agendar
-  async function agendar() {
-    const file = fileInput.files[0];
-    if (!file) { toast('Selecione um vídeo!', 'error'); return; }
-    const btn = document.getElementById('btnAgendar');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Enviando...';
-
-    const fd = new FormData();
-    fd.append('video', file);
-    fd.append('titulo', document.getElementById('titulo').value || file.name);
-    fd.append('horario', document.getElementById('horario').value);
-    fd.append('descricao', document.getElementById('descricao').value);
-    fd.append('privacidade', document.getElementById('privacidade').value);
-    fd.append('recorrente', recorrente ? 'true' : 'false');
-    fd.append('recorrencia', document.getElementById('recorrencia').value);
-    const thumbFile = document.getElementById('thumbInput').files[0];
-    if (thumbFile) fd.append('thumbnail', thumbFile);
-
-    try {
-      const res = await fetch('/agendar', { method: 'POST', body: fd });
-      const data = await res.json();
-      if (data.ok) {
-        toast('✅ Agendado! Você receberá notificação no Telegram quando postar.', 'success');
-        fileInput.value = '';
-        document.getElementById('thumbInput').value = '';
-        document.getElementById('fileChosen').textContent = '';
-        document.getElementById('thumbChosen').textContent = '';
-        document.getElementById('thumbPreview').innerHTML = '🖼️';
-        document.getElementById('titulo').value = '';
-        document.getElementById('descricao').value = '';
-        if (recorrente) toggleRecorrencia();
-      } else {
-        toast('Erro: ' + data.erro, 'error');
-      }
-    } catch(e) {
-      toast('Falha na conexão com o servidor', 'error');
-    }
-    btn.disabled = false;
-    btn.innerHTML = '<span>Agendar upload</span>';
+  async function agendar(){
+    const file=fileInput.files[0]; if(!file){toast('Selecione um vídeo!','error');return;}
+    const btn=document.getElementById('btnAgendar');
+    btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Enviando...';
+    const fd=new FormData();
+    fd.append('video',file);
+    fd.append('titulo',document.getElementById('titulo').value||file.name);
+    fd.append('horario',document.getElementById('horario').value);
+    fd.append('descricao',document.getElementById('descricao').value);
+    fd.append('privacidade',document.getElementById('privacidade').value);
+    fd.append('recorrente',recorrente?'true':'false');
+    fd.append('recorrencia',document.getElementById('recorrencia').value);
+    const tf=document.getElementById('thumbInput').files[0]; if(tf) fd.append('thumbnail',tf);
+    try{
+      const res=await fetch('/agendar',{method:'POST',body:fd});
+      const data=await res.json();
+      if(data.ok){
+        toast('✅ Agendado! Notificação no Telegram quando postar.','success');
+        fileInput.value=''; document.getElementById('thumbInput').value='';
+        document.getElementById('fileChosen').textContent='';
+        document.getElementById('thumbChosen').textContent='';
+        document.getElementById('thumbPreview').innerHTML='🖼️';
+        document.getElementById('titulo').value='';
+        document.getElementById('descricao').value='';
+        if(recorrente) toggleRecorrencia();
+      } else toast('Erro: '+data.erro,'error');
+    } catch(e){toast('Falha na conexão','error');}
+    btn.disabled=false; btn.innerHTML='<span>Agendar upload</span>';
   }
 
-  // Cancelar
-  async function cancelar(id) {
-    const res = await fetch('/cancelar/' + id, { method: 'DELETE' });
-    const data = await res.json();
-    data.ok ? (toast('Cancelado.', 'success'), carregarFila()) : toast('Não foi possível cancelar.', 'error');
+  async function cancelar(id){
+    const res=await fetch('/cancelar/'+id,{method:'DELETE'});
+    const data=await res.json();
+    data.ok?(toast('Cancelado.','success'),carregarFila()):toast('Não foi possível cancelar.','error');
   }
 
-  // Fila
-  async function carregarFila() {
-    try { renderFila(await (await fetch('/fila')).json()); } catch(e) {}
+  // EDIÇÃO
+  function abrirEdicao(item){
+    document.getElementById('editId').value=item.id;
+    document.getElementById('editTitulo').value=item.titulo;
+    document.getElementById('editDescricao').value=item.descricao||'';
+    document.getElementById('editPrivacidade').value=item.privacidade;
+    const h=new Date(item.horario);
+    h.setMinutes(h.getMinutes()-h.getTimezoneOffset());
+    document.getElementById('editHorario').value=h.toISOString().slice(0,16);
+    document.getElementById('modalOverlay').classList.add('open');
   }
 
-  function renderFila(fila) {
-    document.getElementById('queueCount').textContent = fila.length;
-    const c = document.getElementById('queueList');
-    if (!fila.length) { c.innerHTML = '<div class="empty-state">Nenhum vídeo na fila ainda. 👆</div>'; return; }
-    const sl = { aguardando:'Aguardando', enviando:'Enviando...', enviado:'Enviado', erro:'Erro', cancelado:'Cancelado' };
-    const em = ['🎬','📽️','🎥','🎞️','📹'];
-    c.innerHTML = [...fila].reverse().map((item, i) => `
+  function fecharModal(e){
+    if(!e||e.target===document.getElementById('modalOverlay'))
+      document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  async function salvarEdicao(){
+    const id=parseInt(document.getElementById('editId').value);
+    const body={
+      titulo:document.getElementById('editTitulo').value,
+      descricao:document.getElementById('editDescricao').value,
+      horario:document.getElementById('editHorario').value,
+      privacidade:document.getElementById('editPrivacidade').value,
+    };
+    const res=await fetch('/editar/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const data=await res.json();
+    if(data.ok){
+      toast('✅ Salvo!','success');
+      document.getElementById('modalOverlay').classList.remove('open');
+      carregarFila();
+    } else toast('Erro: '+data.erro,'error');
+  }
+
+  async function carregarFila(){
+    try{renderFila(await(await fetch('/fila')).json());}catch(e){}
+  }
+
+  function renderFila(fila){
+    document.getElementById('queueCount').textContent=fila.length;
+    const c=document.getElementById('queueList');
+    if(!fila.length){c.innerHTML='<div class="empty-state">Nenhum vídeo na fila. 👆</div>';return;}
+    const sl={aguardando:'Aguardando',enviando:'Enviando...',enviado:'Enviado',erro:'Erro',cancelado:'Cancelado'};
+    const em=['🎬','📽️','🎥','🎞️','📹'];
+    c.innerHTML=[...fila].reverse().map((item,i)=>`
       <div class="queue-item">
         <div class="qi-thumb">${em[i%em.length]}</div>
         <div class="qi-info">
           <div class="qi-title">${esc(item.titulo)}</div>
           <div class="qi-meta">
             📅 ${new Date(item.horario).toLocaleString('pt-BR')}
-            · ${item.privacidade === 'public' ? '🌍' : item.privacidade === 'unlisted' ? '🔗' : '🔒'}
-            ${item.recorrente ? `<span class="badge-recorrente">🔁 ${item.recorrencia === 'semanal' ? 'Semanal' : 'Diário'}</span>` : ''}
-            ${item.url ? `<a href="${item.url}" target="_blank" style="color:var(--success)">Ver ↗</a>` : ''}
-            ${item.erro ? `<span style="color:var(--red)">${esc(item.erro)}</span>` : ''}
+            · ${item.privacidade==='public'?'🌍':item.privacidade==='unlisted'?'🔗':'🔒'}
+            ${item.recorrente?`<span class="badge-rec">🔁 ${item.recorrencia==='semanal'?'Semanal':'Diário'}</span>`:''}
+            ${item.url?`<a href="${item.url}" target="_blank" style="color:var(--success)">Ver ↗</a>`:''}
+            ${item.erro?`<span style="color:var(--red)">${esc(item.erro)}</span>`:''}
           </div>
         </div>
         <span class="qi-status status-${item.status}">${sl[item.status]||item.status}</span>
-        <div>${item.status==='aguardando'?`<button class="btn btn-outline" onclick="cancelar(${item.id})">Cancelar</button>`:''}</div>
+        <div class="qi-actions">
+          ${item.status==='aguardando'?`
+            <button class="btn btn-outline" onclick='abrirEdicao(${JSON.stringify(item)})'>✏️</button>
+            <button class="btn btn-outline" onclick="cancelar(${item.id})">✕</button>
+          `:''}
+        </div>
       </div>`).join('');
   }
 
-  // Histórico
-  async function carregarHistorico() {
-    try { renderHistorico(await (await fetch('/historico')).json()); } catch(e) {}
+  async function carregarHistorico(){
+    try{renderHistorico(await(await fetch('/historico')).json());}catch(e){}
   }
 
-  function renderHistorico(lista) {
-    document.getElementById('histCount').textContent = lista.length;
-    const c = document.getElementById('histList');
-    if (!lista.length) { c.innerHTML = '<div class="empty-state">Nenhum vídeo postado ainda. 🎬</div>'; return; }
-    c.innerHTML = lista.map(item => `
+  function renderHistorico(lista){
+    document.getElementById('histCount').textContent=lista.length;
+    const c=document.getElementById('histList');
+    if(!lista.length){c.innerHTML='<div class="empty-state">Nenhum vídeo postado ainda. 🎬</div>';return;}
+    c.innerHTML=lista.map(item=>`
       <div class="hist-item">
         <div class="hist-thumb">🎬</div>
         <div class="hist-info">
           <div class="hist-title">${esc(item.titulo)}</div>
-          <div class="hist-meta">
-            📅 ${new Date(item.data).toLocaleString('pt-BR')}
-            · ${item.privacidade === 'public' ? '🌍 Público' : item.privacidade === 'unlisted' ? '🔗 Não listado' : '🔒 Privado'}
-          </div>
+          <div class="hist-meta">📅 ${new Date(item.data).toLocaleString('pt-BR')} · ${item.privacidade==='public'?'🌍 Público':item.privacidade==='unlisted'?'🔗 Não listado':'🔒 Privado'}</div>
         </div>
         <a class="hist-link" href="${item.url}" target="_blank">Ver no YouTube ↗</a>
       </div>`).join('');
   }
 
-  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function exportarExcel(){
+    window.location.href='/exportar-excel';
+    toast('⬇️ Baixando planilha...','success');
+  }
+
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
   let toastTimer;
-  function toast(msg, type='success') {
-    const el = document.getElementById('toast');
-    el.textContent = msg; el.className = 'show ' + type;
+  function toast(msg,type='success'){
+    const el=document.getElementById('toast');
+    el.textContent=msg; el.className='show '+type;
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => el.className = '', 4000);
+    toastTimer=setTimeout(()=>el.className='',4000);
   }
 
   carregarFila();
-  setInterval(carregarFila, 5000);
+  setInterval(carregarFila,5000);
 </script>
 </body>
 </html>
