@@ -2,11 +2,10 @@
 """
 YouTube Upload Scheduler - Web Interface
 =========================================
-Servidor web local para agendar uploads no YouTube.
-Suporte a thumbnail personalizada e uploads recorrentes.
+Com notificação no Telegram e histórico de uploads.
 
 Instalar dependências:
-    pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib flask
+    pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib flask requests
 
 Rodar:
     python app.py
@@ -15,9 +14,12 @@ Rodar:
 
 import os
 import time
+import json
 import pickle
+import shutil
 import logging
 import threading
+import requests
 from pathlib import Path
 from datetime import datetime, timedelta
 
@@ -37,6 +39,12 @@ PASTA_ENVIADOS   = Path("enviados")
 PASTA_THUMBS     = Path("thumbs")
 CREDENTIALS_FILE = "client_secrets.json"
 TOKEN_FILE       = "token.pickle"
+HISTORICO_FILE   = "historico.json"
+
+# Telegram
+TELEGRAM_TOKEN   = "8608511631:AAFG9qPvifnJziLCL4UE-rMwMZWH37d27pk"
+TELEGRAM_CHAT_ID = "8144548560"
+
 SCOPES = [
     "https://www.googleapis.com/auth/youtube.upload",
     "https://www.googleapis.com/auth/youtube",
@@ -49,6 +57,46 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger(__name__)
 
 app = Flask(__name__, static_folder=".")
+
+# ─────────────────────────────────────────────
+#  HISTÓRICO
+# ─────────────────────────────────────────────
+
+def carregar_historico() -> list:
+    if Path(HISTORICO_FILE).exists():
+        with open(HISTORICO_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def salvar_historico(historico: list):
+    with open(HISTORICO_FILE, "w", encoding="utf-8") as f:
+        json.dump(historico, f, ensure_ascii=False, indent=2)
+
+def adicionar_historico(titulo: str, url: str, privacidade: str):
+    historico = carregar_historico()
+    historico.insert(0, {
+        "titulo":     titulo,
+        "url":        url,
+        "privacidade": privacidade,
+        "data":       datetime.now().isoformat(),
+    })
+    salvar_historico(historico)
+
+# ─────────────────────────────────────────────
+#  TELEGRAM
+# ─────────────────────────────────────────────
+
+def enviar_telegram(mensagem: str):
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        requests.post(url, json={
+            "chat_id": TELEGRAM_CHAT_ID,
+            "text": mensagem,
+            "parse_mode": "HTML",
+        }, timeout=10)
+        log.info("📱 Telegram notificado.")
+    except Exception as e:
+        log.warning("⚠️ Falha ao notificar Telegram: %s", e)
 
 # ─────────────────────────────────────────────
 #  AUTENTICAÇÃO
@@ -70,7 +118,7 @@ def autenticar():
     return build("youtube", "v3", credentials=credenciais)
 
 # ─────────────────────────────────────────────
-#  UPLOAD + THUMBNAIL
+#  UPLOAD
 # ─────────────────────────────────────────────
 
 def fazer_upload(youtube, item: dict) -> dict:
@@ -88,10 +136,8 @@ def fazer_upload(youtube, item: dict) -> dict:
     }
 
     media = MediaFileUpload(
-        str(caminho_video),
-        mimetype="video/*",
-        resumable=True,
-        chunksize=10 * 1024 * 1024,
+        str(caminho_video), mimetype="video/*",
+        resumable=True, chunksize=10 * 1024 * 1024,
     )
 
     try:
@@ -101,9 +147,10 @@ def fazer_upload(youtube, item: dict) -> dict:
             _, resposta = req.next_chunk()
 
         video_id = resposta.get("id", "")
-        log.info("✅ Upload concluído: https://youtu.be/%s", video_id)
+        url = f"https://youtu.be/{video_id}"
+        log.info("✅ Upload concluído: %s", url)
 
-        # Sobe thumbnail se existir
+        # Thumbnail
         thumb_path = item.get("thumb_caminho")
         if thumb_path and Path(thumb_path).exists():
             try:
@@ -111,20 +158,33 @@ def fazer_upload(youtube, item: dict) -> dict:
                     videoId=video_id,
                     media_body=MediaFileUpload(thumb_path, mimetype="image/*")
                 ).execute()
-                log.info("🖼️ Thumbnail aplicada ao vídeo %s", video_id)
+                log.info("🖼️ Thumbnail aplicada.")
             except HttpError as e:
-                log.warning("⚠️ Thumbnail falhou (conta pode precisar de verificação): %s", e)
+                log.warning("⚠️ Thumbnail falhou: %s", e)
 
-        # Move vídeo para /enviados somente se não for recorrente
+        # Move vídeo para /enviados (se não for recorrente)
         if not item.get("recorrente"):
             destino = PASTA_ENVIADOS / caminho_video.name
             if destino.exists():
                 destino = PASTA_ENVIADOS / f"{caminho_video.stem}__{int(time.time())}{caminho_video.suffix}"
-            caminho_video.rename(destino)
+            shutil.move(str(caminho_video), str(destino))
 
-        return {"ok": True, "video_id": video_id, "url": f"https://youtu.be/{video_id}"}
+        # Salva no histórico
+        adicionar_historico(item["titulo"], url, item["privacidade"])
+
+        # Notifica Telegram
+        priv_emoji = {"public": "🌍", "unlisted": "🔗", "private": "🔒"}.get(item["privacidade"], "")
+        enviar_telegram(
+            f"✅ <b>Vídeo postado no YouTube!</b>\n\n"
+            f"🎬 <b>{item['titulo']}</b>\n"
+            f"{priv_emoji} {item['privacidade'].capitalize()}\n"
+            f"🔗 {url}"
+        )
+
+        return {"ok": True, "video_id": video_id, "url": url}
 
     except HttpError as e:
+        enviar_telegram(f"❌ <b>Falha no upload!</b>\n\n🎬 {item['titulo']}\n⚠️ {e}")
         return {"ok": False, "erro": str(e)}
     except Exception as e:
         return {"ok": False, "erro": str(e)}
@@ -136,8 +196,7 @@ def fazer_upload(youtube, item: dict) -> dict:
 def proximo_horario(item: dict) -> str:
     base = datetime.fromisoformat(item["horario"])
     agora = datetime.now()
-    recorrencia = item.get("recorrencia", "diario")
-    delta = timedelta(weeks=1) if recorrencia == "semanal" else timedelta(days=1)
+    delta = timedelta(weeks=1) if item.get("recorrencia") == "semanal" else timedelta(days=1)
     while base <= agora:
         base += delta
     return base.isoformat()
@@ -147,7 +206,7 @@ def proximo_horario(item: dict) -> str:
 # ─────────────────────────────────────────────
 
 def worker():
-    log.info("Worker de agendamento iniciado.")
+    log.info("Worker iniciado.")
     youtube = autenticar()
 
     while True:
@@ -160,7 +219,6 @@ def worker():
                     continue
 
                 item["status"] = "enviando"
-                log.info("Enviando '%s'...", item["titulo"])
                 resultado = fazer_upload(youtube, item)
 
                 if resultado["ok"]:
@@ -170,13 +228,11 @@ def worker():
                         item["url_historico"].append(resultado["url"])
                         item["horario"] = proximo_horario(item)
                         item["status"] = "aguardando"
-                        log.info("🔁 Reagendado para %s", item["horario"])
                     else:
                         item["status"] = "enviado"
                 else:
                     item["status"] = "erro"
                     item["erro"] = resultado["erro"]
-                    log.error("❌ Erro: %s", resultado["erro"])
 
         time.sleep(30)
 
@@ -201,9 +257,8 @@ def agendar():
     recorrente  = request.form.get("recorrente", "false") == "true"
     recorrencia = request.form.get("recorrencia", "diario")
 
-    PASTA_UPLOADS.mkdir(exist_ok=True)
-    PASTA_ENVIADOS.mkdir(exist_ok=True)
-    PASTA_THUMBS.mkdir(exist_ok=True)
+    for p in [PASTA_UPLOADS, PASTA_ENVIADOS, PASTA_THUMBS]:
+        p.mkdir(exist_ok=True)
 
     caminho = PASTA_UPLOADS / arquivo.filename
     arquivo.save(str(caminho))
@@ -236,13 +291,16 @@ def agendar():
     with fila_lock:
         fila_agendados.append(item)
 
-    log.info("Agendado: '%s' para %s (recorrente=%s)", titulo, horario, recorrente)
     return jsonify({"ok": True, "item": item})
 
 @app.route("/fila")
 def listar_fila():
     with fila_lock:
         return jsonify(fila_agendados)
+
+@app.route("/historico")
+def listar_historico():
+    return jsonify(carregar_historico())
 
 @app.route("/cancelar/<int:item_id>", methods=["DELETE"])
 def cancelar(item_id):
@@ -252,16 +310,15 @@ def cancelar(item_id):
                 item["status"] = "cancelado"
                 Path(item["caminho"]).unlink(missing_ok=True)
                 return jsonify({"ok": True})
-    return jsonify({"ok": False, "erro": "Item não encontrado ou já processado"}), 404
+    return jsonify({"ok": False, "erro": "Item não encontrado"}), 404
 
 # ─────────────────────────────────────────────
 #  MAIN
 # ─────────────────────────────────────────────
 
 if __name__ == "__main__":
-    PASTA_UPLOADS.mkdir(exist_ok=True)
-    PASTA_ENVIADOS.mkdir(exist_ok=True)
-    PASTA_THUMBS.mkdir(exist_ok=True)
+    for p in [PASTA_UPLOADS, PASTA_ENVIADOS, PASTA_THUMBS]:
+        p.mkdir(exist_ok=True)
 
     threading.Thread(target=worker, daemon=True).start()
 
